@@ -21,7 +21,6 @@ a = Analysis(
     datas=[
         (f'libsvpng{dllext}', '.'),
         ('squoosh.pak', '.'),
-        ('codec/README.txt', 'codec'),
     ],
     hiddenimports=[],
     hookspath=[],
