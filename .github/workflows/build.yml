@@ -1,0 +1,97 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-squoosh:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONOPTIMIZE: 1
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          architecture: x64
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: squoosh/pnpm-lock.yaml
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: latest
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          check-latest: true
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Build squoosh
+        run: |
+          cd squoosh
+          pnpm install
+          pnpm run build
+          cd ..
+          python bundle-squoosh.py
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: squoosh
+          path: squoosh.pak
+  build:
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONOPTIMIZE: 1
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          # - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          check-latest: true
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pip dependencies
+        run: pip install -U -r requirements.txt
+      - name: Download prebuilt squoosh assets
+        uses: actions/download-artifact@v4
+        with:
+          name: squoosh
+      - name: Build
+        run: |
+          if [ $RUNNER_OS == "Windows" ]; then
+            choco install upx --no-progress
+            gcc -Wall -Ofast -march=native -mtune=native -shared -o libsvpng.dll svpng.c
+            strip libsvpng.dll
+            upx --ultra-brute libsvpng.dll
+          elif [ $RUNNER_OS == "Linux" ]; then
+            gcc -Wall -Ofast -march=native -mtune=native -shared -o libsvpng.so svpng.c
+            strip libsvpng.so
+          fi
+          pip install -U pyinstaller
+          pyinstaller --noconfirm --log-level WARN main.spec
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: squoosh-native-${{ runner.os }}
+          path: dist
