@@ -8,9 +8,6 @@ on:
 jobs:
   build-squoosh:
     runs-on: ubuntu-latest
-    env:
-      PYTHONIOENCODING: utf-8
-      PYTHONOPTIMIZE: 1
     defaults:
       run:
         shell: bash
@@ -18,6 +15,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,10 +27,6 @@ jobs:
           check-latest: true
           cache: pnpm
           cache-dependency-path: squoosh/pnpm-lock.yaml
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
-        with:
-          version: latest
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -50,6 +47,7 @@ jobs:
           name: squoosh
           path: squoosh.pak
   build:
+    needs: build-squoosh
     runs-on: ${{ matrix.os }}
     env:
       PYTHONIOENCODING: utf-8
