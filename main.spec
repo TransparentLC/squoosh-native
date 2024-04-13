@@ -110,6 +110,9 @@ for entry in d:
     # Remove Android support
     if path == 'webview/lib/pywebview-android.jar':
         continue
+    # Remove clr-loader x86 dlls
+    if path.startswith('clr_loader/ffi/dlls/x86'):
+        continue
     a.datas.append(entry)
 
 for entry in sorted(a.datas):
