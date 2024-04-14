@@ -131,5 +131,6 @@ with zipfile.ZipFile('squoosh.pak', 'w') as archive:
                 }.get(info.compress_type, f'compression#{info.compress_type}'),
                 sep='\t',
             )
+
 print(f'Packed file: {pakpath}')
 print(f'Packed size: {os.path.getsize(pakpath)} bytes')

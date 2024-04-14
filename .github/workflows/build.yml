@@ -40,7 +40,7 @@ jobs:
           pnpm install
           pnpm run build
           cd ..
-          python bundle-squoosh.py
+          python bundle_squoosh.py
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
