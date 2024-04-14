@@ -3,6 +3,7 @@ import pprint
 import shlex
 import subprocess
 import tempfile
+import threading
 import time
 import webview
 import wvruntime
@@ -11,6 +12,10 @@ import image_codec
 import svpng
 
 DEBUG = bool(os.environ.get('DEBUG') and not wvruntime.isFrozen)
+
+compressLock = threading.Lock()
+compressCounterLock = threading.Lock()
+compressCounter = 0
 
 def init(window: webview.Window):
     wvruntime.initMsgpackApi(window)
@@ -36,24 +41,32 @@ def init(window: webview.Window):
 
     @wvruntime.exposeMsgpack(window, 'compressImage')
     def _(image: image_codec.ImageData, encoderState: image_codec.EncoderState):
+        global compressCounter
         pprint.pprint(encoderState)
         if encoderState['type'] not in image_codec.encoderOptionsClassMapping:
             raise RuntimeError(f'Invalid encoder type: {encoderState['type']}')
-        encoderOptionsClass = image_codec.encoderOptionsClassMapping[encoderState['type']]
-        tempInput = tempfile.mktemp('.png')
-        tempOutput = tempfile.mktemp()
-        ts = time.perf_counter()
-        svpng.write(tempInput, image['width'], image['height'], image['data'], True)
-        command = encoderOptionsClass(**encoderState['options']).buildCommand(tempInput, tempOutput)
-        print(shlex.join(command))
-        subprocess.check_call(command, creationflags=(not DEBUG and subprocess.CREATE_NO_WINDOW))
-        te = time.perf_counter()
-        os.remove(tempInput)
-        print('Encode time:', te - ts)
-        with open(tempOutput, 'rb') as f:
-            d = f.read()
-        os.remove(tempOutput)
-        return d
+        with compressCounterLock:
+            compressCounter += 1
+            counter = compressCounter
+        with compressLock:
+            if counter != compressCounter:
+                print('Skip obsoleted compression task')
+                return b''
+            encoderOptionsClass = image_codec.encoderOptionsClassMapping[encoderState['type']]
+            tempInput = tempfile.mktemp('.png')
+            tempOutput = tempfile.mktemp()
+            ts = time.perf_counter()
+            svpng.write(tempInput, image['width'], image['height'], image['data'], True)
+            command = encoderOptionsClass(**encoderState['options']).buildCommand(tempInput, tempOutput)
+            print(shlex.join(command))
+            subprocess.check_call(command, creationflags=(not DEBUG and subprocess.CREATE_NO_WINDOW))
+            te = time.perf_counter()
+            os.remove(tempInput)
+            print('Encode time:', te - ts)
+            with open(tempOutput, 'rb') as f:
+                d = f.read()
+            os.remove(tempOutput)
+            return d
 
     window.evaluate_js('window.dispatchEvent(new CustomEvent("pywebviewapiready"))')
 
