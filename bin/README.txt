@@ -1,8 +1,8 @@
-Place the encoder binaries in this folder.
+Place the encoder and comparison tool binaries in this folder.
 
 ---
 
-Download encoders on Windows:
+Download CLI tools on Windows:
 
 mozjpeg
 https://github.com/garyzyg/mozjpeg-windows/releases (mozjpeg-x64.zip)
@@ -27,3 +27,17 @@ webp
 https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html (libwebp-*-windows-x64.zip)
 https://jeremylee.sh/bins/webp.7z
 Extract "cwebp.exe".
+
+dssim
+https://github.com/kornelski/dssim/releases (dssim-*.zip)
+https://jeremylee.sh/bins/dssim.7z
+Extract "dssim.exe".
+
+butteraugli
+https://github.com/libjxl/libjxl/releases (jxl-x64-windows-static.zip)
+https://jeremylee.sh/bins/butteraugli.7z
+Extract "butteraugli_main.exe" and rename to "butteraugli.exe".
+
+ssimulacra2
+https://github.com/libjxl/libjxl/releases (jxl-x64-windows-static.zip)
+Extract "ssimulacra2.exe".

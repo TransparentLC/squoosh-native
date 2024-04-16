@@ -5,7 +5,7 @@ import typing
 import wvruntime
 from concurrent.futures import ThreadPoolExecutor
 
-codecDir = os.path.join(wvruntime.executablePath, 'codec')
+binDir = os.path.join(wvruntime.executablePath, 'bin')
 
 class ImageData(typing.TypedDict):
     width: int
@@ -52,7 +52,7 @@ class MozJPEGEncoderOptions(AbstractEncoderOptions):
     def checkInfo() -> str | None:
         try:
             r = subprocess.run(
-                (os.path.join(codecDir, 'cjpeg'), '-version'),
+                (os.path.join(binDir, 'cjpeg'), '-version'),
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
                 text=True,
@@ -63,7 +63,7 @@ class MozJPEGEncoderOptions(AbstractEncoderOptions):
             return None
 
     def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
-        args = [os.path.join(codecDir, 'cjpeg')]
+        args = [os.path.join(binDir, 'cjpeg')]
         args.append('-quant-table')
         args.append(str(self.quant_table))
         if self.optimize_coding:
@@ -119,7 +119,7 @@ class AVIFEncoderOptions(AbstractEncoderOptions):
     def checkInfo() -> str | None:
         try:
             return subprocess.check_output(
-                (os.path.join(codecDir, 'avifenc'), '--version'),
+                (os.path.join(binDir, 'avifenc'), '--version'),
                 text=True,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             ).strip()
@@ -127,7 +127,7 @@ class AVIFEncoderOptions(AbstractEncoderOptions):
             return None
 
     def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
-        args = [os.path.join(codecDir, 'avifenc')]
+        args = [os.path.join(binDir, 'avifenc')]
         args.append('--jobs')
         args.append('all')
         args.append('--yuv')
@@ -178,7 +178,7 @@ class JXLEncoderOptions(AbstractEncoderOptions):
     def checkInfo() -> str | None:
         try:
             return subprocess.check_output(
-                (os.path.join(codecDir, 'cjxl'), '--version'),
+                (os.path.join(binDir, 'cjxl'), '--version'),
                 text=True,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             ).strip()
@@ -186,7 +186,7 @@ class JXLEncoderOptions(AbstractEncoderOptions):
             return None
 
     def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
-        args = [os.path.join(codecDir, 'cjxl')]
+        args = [os.path.join(binDir, 'cjxl')]
         args.append(inputFile)
         args.append(outputFile)
         args.append('--brotli_effort=11')
@@ -232,7 +232,7 @@ class OxiPNGEncoderOptions(AbstractEncoderOptions):
     def checkInfo() -> str | None:
         try:
             return subprocess.check_output(
-                (os.path.join(codecDir, 'oxipng'), '--version'),
+                (os.path.join(binDir, 'oxipng'), '--version'),
                 text=True,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             ).strip()
@@ -240,7 +240,7 @@ class OxiPNGEncoderOptions(AbstractEncoderOptions):
             return None
 
     def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
-        args = [os.path.join(codecDir, 'oxipng')]
+        args = [os.path.join(binDir, 'oxipng')]
         args.append('--verbose')
         args.append('--verbose')
         args.append('--opt')
@@ -291,7 +291,7 @@ class WebPEncoderOptions(AbstractEncoderOptions):
     def checkInfo() -> str | None:
         try:
             return subprocess.check_output(
-                (os.path.join(codecDir, 'cwebp'), '-version'),
+                (os.path.join(binDir, 'cwebp'), '-version'),
                 text=True,
                 creationflags=subprocess.CREATE_NO_WINDOW,
             ).strip()
@@ -299,7 +299,7 @@ class WebPEncoderOptions(AbstractEncoderOptions):
             return None
 
     def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
-        args = [os.path.join(codecDir, 'cwebp')]
+        args = [os.path.join(binDir, 'cwebp')]
         args.append('-v')
         args.append('-q')
         args.append(str(self.quality))
@@ -365,7 +365,64 @@ encoderOptionsClassMapping: dict[str, AbstractEncoderOptions] = {
     'webP': WebPEncoderOptions,
 }
 
+
+class AbstractMetric:
+    executable: str
+
+    @classmethod
+    def check(cls) -> bool:
+        return os.path.exists(os.path.join(binDir, cls.executable + ('.exe' if os.name == 'nt' else '')))
+
+    @staticmethod
+    def parseOutput(output: str) -> float:
+        raise NotImplementedError()
+
+    @classmethod
+    def calculate(cls, originalFile: str, distortedFile: str) -> float:
+        return cls.parseOutput(subprocess.check_output((os.path.join(binDir, cls.executable), originalFile, distortedFile), text=True).strip())
+
+class DSSIMMetric(AbstractMetric):
+    executable = 'dssim'
+
+    @staticmethod
+    def parseOutput(output: str) -> float:
+        return float(output.split('\t', 2)[0])
+
+class ButteraugliMetric(AbstractMetric):
+    executable = 'butteraugli'
+
+    @staticmethod
+    def parseOutput(output: str) -> float:
+        return float(output.split('\n')[1].removeprefix('3-norm: '))
+
+    @classmethod
+    def calculate(cls, originalFile: str, distortedFile: str) -> float:
+        try:
+            super().calculate(originalFile, distortedFile)
+        except subprocess.CalledProcessError as ex:
+            if ex.returncode != 1:
+                raise ex
+            return cls.parseOutput(ex.stdout)
+
+class SSIMULACRA2Metric(AbstractMetric):
+    executable = 'ssimulacra2'
+
+    @staticmethod
+    def parseOutput(output: str) -> float:
+        return float(output)
+
+
+metricClassMapping: dict[str, AbstractMetric] = {
+    'dssim': DSSIMMetric,
+    'butteraugli': ButteraugliMetric,
+    'ssimulacra2': SSIMULACRA2Metric,
+}
+
 @functools.cache
 def checkCodec() -> dict[str, str | None]:
     with ThreadPoolExecutor() as executor:
         return dict(executor.map(lambda k: (k, encoderOptionsClassMapping[k].checkInfo()), encoderOptionsClassMapping))
+
+@functools.cache
+def checkMetric() -> dict[str, bool]:
+    return {k: metricClassMapping[k].check() for k in metricClassMapping}

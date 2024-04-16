@@ -87,8 +87,8 @@ jobs:
           fi
           pip install -U pyinstaller
           pyinstaller --noconfirm --log-level WARN main.spec
-          mkdir -p dist/squoosh-native/codec
-          cp codec/README.txt dist/squoosh-native/codec/README.txt
+          mkdir -p dist/squoosh-native/bin
+          cp bin/README.txt dist/squoosh-native/bin/README.txt
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
