@@ -357,14 +357,40 @@ class WebPEncoderOptions(AbstractEncoderOptions):
         args.append(inputFile)
         return args
 
+class JpegliEncoderOptions(AbstractEncoderOptions):
+    quality: int
+    subsample: int
+    xyb: bool
+
+    @staticmethod
+    def checkInfo() -> str | None:
+        try:
+            subprocess.check_output((os.path.join(binDir, 'cjpegli'), ), creationflags=subprocess.CREATE_NO_WINDOW)
+            return 'Available'
+        except FileNotFoundError:
+            return None
+
+    def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
+        args = [os.path.join(binDir, 'cjpegli')]
+        args.append(inputFile)
+        args.append(outputFile)
+        args.append('--verbose')
+        args.append('--verbose')
+        args.append(f'--quality={self.quality}')
+        args.append(f'--chroma_subsampling={('420', '422', '440', '444')[self.subsample]}')
+        if self.xyb:
+            args.append('--xyb')
+        args.append('--progressive_level=1')
+        return args
+
 encoderOptionsClassMapping: dict[str, AbstractEncoderOptions] = {
     'mozJPEG': MozJPEGEncoderOptions,
     'avif': AVIFEncoderOptions,
     'jxl': JXLEncoderOptions,
     'oxiPNG': OxiPNGEncoderOptions,
     'webP': WebPEncoderOptions,
+    'jpegli': JpegliEncoderOptions,
 }
-
 
 class AbstractMetric:
     executable: str

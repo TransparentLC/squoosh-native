@@ -28,6 +28,15 @@ https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.htm
 https://jeremylee.sh/bins/webp.7z
 Extract "cwebp.exe".
 
+jpegli
+https://github.com/libjxl/libjxl/releases (jxl-x64-windows-static.zip)
+Extract "cjpegli.exe".
+Images with alpha mess with jpegli using XYB · Issue #2671 · libjxl/libjxl
+https://github.com/libjxl/libjxl/issues/2671
+v0.10.2 or earlier cannot handle RGBA images if encoding with XYB colorspace. Use nightly builds instead.
+https://github.com/libjxl/libjxl/actions/workflows/release.yaml (jxl-x64-windows-static.zip)
+https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
+
 dssim
 https://github.com/kornelski/dssim/releases (dssim-*.zip)
 https://jeremylee.sh/bins/dssim.7z
