@@ -40,7 +40,7 @@ jobs:
           unzip "libwebp-${v}-windows-x64.zip"
           cp "libwebp-${v}-windows-x64/bin/cwebp.exe" codec/cwebp.exe
 
-          v=$(curl --silent --compressed https://api.github.com/repos/kornelski/dssim/tags | jq -r ".[0].name")
+          v=$(curl --silent --compressed https://api.github.com/repos/kornelski/dssim/tags | jq -r "[.[] | select(.name | test(\"^[0-9]+\\\.[0-9]+\\\.[0-9]+\"))][0].name")
           wget "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
           unzip "dssim-${v}.zip"
           cp win/dssim.exe codec/dssim.exe
