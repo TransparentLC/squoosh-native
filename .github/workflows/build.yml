@@ -45,7 +45,7 @@ jobs:
           unzip "dssim-${v}.zip"
           cp win/dssim.exe "${d}/dssim.exe"
 
-          rm -f bin
+          rm -rf bin
           mv $d bin
       - name: Upload result
         uses: actions/upload-artifact@v4
