@@ -16,34 +16,37 @@ jobs:
     steps:
       - name: Download CLI tools for Windows
         run: |
-          mkdir -p codec
+          d=$(mktemp -d)
 
           v=$(curl --silent --compressed https://api.github.com/repos/garyzyg/mozjpeg-windows/tags | jq -r ".[0].name")
           wget "https://github.com/garyzyg/mozjpeg-windows/releases/download/${v}/mozjpeg-x64.zip"
           unzip "mozjpeg-x64.zip"
-          cp cjpeg-static.exe codec/cjpeg.exe
+          cp cjpeg-static.exe "${d}/cjpeg.exe"
 
           v=$(curl --silent --compressed https://api.github.com/repos/AOMediaCodec/libavif/tags | jq -r ".[0].name")
           wget "https://github.com/AOMediaCodec/libavif/releases/download/${v}/libavif-${v}-avifenc-avifdec-windows.zip"
           unzip "libavif-${v}-avifenc-avifdec-windows.zip"
-          cp avifenc.exe codec/avifenc.exe
+          cp avifenc.exe "${d}/avifenc.exe"
 
           wget https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
           unzip jxl-x64-windows-static.zip
-          cp bin/cjxl.exe codec/cjxl.exe
-          cp bin/cjpegli.exe codec/cjpegli.exe
-          cp bin/ssimulacra2.exe codec/ssimulacra2.exe
-          cp bin/butteraugli_main.exe codec/butteraugli.exe
+          cp bin/cjxl.exe "${d}/cjxl.exe"
+          cp bin/cjpegli.exe "${d}/cjpegli.exe"
+          cp bin/ssimulacra2.exe "${d}/ssimulacra2.exe"
+          cp bin/butteraugli_main.exe "${d}/butteraugli.exe"
 
           v=$(curl --silent --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r ".[0].name[1:]")
           wget "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${v}-windows-x64.zip"
           unzip "libwebp-${v}-windows-x64.zip"
-          cp "libwebp-${v}-windows-x64/bin/cwebp.exe" codec/cwebp.exe
+          cp "libwebp-${v}-windows-x64/bin/cwebp.exe" "${d}/cwebp.exe"
 
           v=$(curl --silent --compressed https://api.github.com/repos/kornelski/dssim/releases | jq -r ".[0].tag_name")
           wget "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
           unzip "dssim-${v}.zip"
-          cp win/dssim.exe codec/dssim.exe
+          cp win/dssim.exe "${d}/dssim.exe"
+
+          rm -f bin
+          mv $d bin
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
