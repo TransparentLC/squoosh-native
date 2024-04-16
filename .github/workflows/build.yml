@@ -28,6 +28,11 @@ jobs:
           unzip "libavif-${v}-avifenc-avifdec-windows.zip"
           cp avifenc.exe "${d}/avifenc.exe"
 
+          v=$(curl --silent --compressed https://api.github.com/repos/shssoichiro/oxipng/tags | jq -r ".[0].name[1:]")
+          wget "https://github.com/shssoichiro/oxipng/releases/download/v${v}/oxipng-${v}-x86_64-pc-windows-msvc.zip"
+          unzip "oxipng-${v}-x86_64-pc-windows-msvc.zip"
+          cp "oxipng-${v}-x86_64-pc-windows-msvc/oxipng.exe" "${d}/oxipng.exe"
+
           wget https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
           unzip jxl-x64-windows-static.zip
           cp bin/cjxl.exe "${d}/cjxl.exe"
