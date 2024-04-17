@@ -141,6 +141,7 @@ jobs:
           pyinstaller --noconfirm --log-level WARN main.spec
           mkdir -p dist/squoosh-native/bin
           cp bin/README.txt dist/squoosh-native/bin/README.txt
+          cp README.md dist/squoosh-native/README.md
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
