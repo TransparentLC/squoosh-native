@@ -421,15 +421,6 @@ class ButteraugliMetric(AbstractMetric):
     def parseOutput(output: str) -> float:
         return float(output.split('\n')[1].removeprefix('3-norm: '))
 
-    @classmethod
-    def calculate(cls, originalFile: str, distortedFile: str) -> float:
-        try:
-            super().calculate(originalFile, distortedFile)
-        except subprocess.CalledProcessError as ex:
-            if ex.returncode != 1:
-                raise ex
-            return cls.parseOutput(ex.stdout)
-
 class SSIMULACRA2Metric(AbstractMetric):
     executable = 'ssimulacra2'
 
