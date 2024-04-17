@@ -405,7 +405,13 @@ class AbstractMetric:
 
     @classmethod
     def calculate(cls, originalFile: str, distortedFile: str) -> float:
-        return cls.parseOutput(subprocess.check_output((os.path.join(binDir, cls.executable), originalFile, distortedFile), text=True).strip())
+        return cls.parseOutput(
+            subprocess.check_output(
+                (os.path.join(binDir, cls.executable), originalFile, distortedFile),
+                text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            ).strip()
+        )
 
 class DSSIMMetric(AbstractMetric):
     executable = 'dssim'
