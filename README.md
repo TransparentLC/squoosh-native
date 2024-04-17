@@ -2,6 +2,8 @@
 
 [![build](https://github.com/TransparentLC/squoosh-native/actions/workflows/build.yml/badge.svg)](https://github.com/TransparentLC/squoosh-native/actions/workflows/build.yml)
 
+![](https://github.com/TransparentLC/squoosh-native/assets/47057319/bd377ebe-96f0-426f-8661-7d5713322bfa)
+
 ## 基本介绍
 
 使用 pywebview 框架和 Squoosh 的源代码构建的桌面应用。
