@@ -37,6 +37,10 @@ v0.10.2 or earlier cannot handle RGBA images if encoding with XYB colorspace. Us
 https://github.com/libjxl/libjxl/actions/workflows/release.yaml (jxl-x64-windows-static.zip)
 https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
 
+pngquant
+https://pngquant.org/pngquant-windows.zip
+Extract "pngquant.exe".
+
 dssim
 https://github.com/kornelski/dssim/releases (dssim-*.zip)
 https://jeremylee.sh/bins/dssim.7z

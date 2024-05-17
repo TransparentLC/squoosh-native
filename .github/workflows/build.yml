@@ -50,6 +50,10 @@ jobs:
           unzip "dssim-${v}.zip"
           cp win/dssim.exe "${d}/dssim.exe"
 
+          wget https://pngquant.org/pngquant-windows.zip
+          unzip pngquant-windows.zip
+          cp pngquant/pngquant.exe "${d}/pngquant.exe"
+
           rm -rf bin
           mv $d bin
       - name: Upload result

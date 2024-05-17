@@ -73,6 +73,7 @@ DEBUG=1 python main.py
 | MozJPEG          | ✅ | ✅ | 1806.30 | 2827.67 | 0.64x 🐢 |  |
 | OxiPNG           | ✅ | ✅ | 15039.15 | 12065.13 | 1.25x 🐇 | Effort 2 |
 |                  |    |    | 22692.70 | 18722.72 | 1.21x 🐇 | Effort 4 |
+| pngquant         | ❌ | ✅ |  |  |  |  |
 | QOI              | ✅ | ❌ |  |  |  |  |
 | WebP             | ✅ | ✅ | 2352.89 | 3347.34 | 0.70x 🐢 | Effort 4 |
 |                  |    |    | 3269.96 | 5048.69 | 0.65x 🐢 | Effort 6 |
@@ -94,6 +95,7 @@ DEBUG=1 python main.py
 * 支持 Jpegli 编码器
     * 目前还没有被 Squoosh 支持（[GoogleChromeLabs/squoosh [Feature Request] Support for jpegli #1408](https://github.com/GoogleChromeLabs/squoosh/issues/1408)）
     * 在相同的文件大小下，图片质量一般比 MozJPEG 更好
+* 支持 pngquant 编码器
 
 ## 可能遇到的问题
 

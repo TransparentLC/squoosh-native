@@ -383,6 +383,43 @@ class JpegliEncoderOptions(AbstractEncoderOptions):
         args.append('--progressive_level=1')
         return args
 
+class PngquantEncoderOptions(AbstractEncoderOptions):
+    quality: int
+    effort: int
+    fs: bool
+    strip: bool
+
+    @staticmethod
+    def checkInfo() -> str | None:
+        try:
+            r = subprocess.run(
+                (os.path.join(binDir, 'pngquant'),),
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            ).stderr.strip().splitlines()[0]
+            return r if 'pngquant' in r else None
+        except FileNotFoundError:
+            return None
+
+    def buildCommand(self, inputFile: str, outputFile: str) -> list[str]:
+        args = [os.path.join(binDir, 'pngquant')]
+        args.append('--output')
+        args.append(outputFile)
+        args.append('--quality')
+        args.append(f'0-{self.quality}')
+        args.append('--speed')
+        args.append(str(12 - self.effort))
+        if not self.fs:
+            args.append('--nofs')
+        if self.strip:
+            args.append('--strip')
+        args.append('--verbose')
+        args.append('--')
+        args.append(inputFile)
+        return args
+
 encoderOptionsClassMapping: dict[str, AbstractEncoderOptions] = {
     'mozJPEG': MozJPEGEncoderOptions,
     'avif': AVIFEncoderOptions,
@@ -390,6 +427,7 @@ encoderOptionsClassMapping: dict[str, AbstractEncoderOptions] = {
     'oxiPNG': OxiPNGEncoderOptions,
     'webP': WebPEncoderOptions,
     'jpegli': JpegliEncoderOptions,
+    'pngquant': PngquantEncoderOptions,
 }
 
 class AbstractMetric:
