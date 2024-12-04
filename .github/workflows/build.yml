@@ -41,7 +41,7 @@ jobs:
           cp bin/ssimulacra2.exe "${d}/ssimulacra2.exe"
           cp bin/butteraugli_main.exe "${d}/butteraugli.exe"
 
-          v=$(curl --silent --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r ".[0].name[1:]")
+          v=$(curl --silent --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r '.[] | select(.name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))')
           wget "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${v}-windows-x64.zip"
           unzip "libwebp-${v}-windows-x64.zip"
           cp "libwebp-${v}-windows-x64/bin/cwebp.exe" "${d}/cwebp.exe"
@@ -73,7 +73,7 @@ jobs:
         with:
           submodules: true
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: latest
       - name: Setup Node.js
