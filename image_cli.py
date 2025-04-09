@@ -377,9 +377,10 @@ class JpegliEncoderOptions(AbstractEncoderOptions):
         args.append('--verbose')
         args.append('--verbose')
         args.append(f'--quality={self.quality}')
-        args.append(f'--chroma_subsampling={('420', '422', '440', '444')[self.subsample]}')
         if self.xyb:
             args.append('--xyb')
+        else:
+            args.append(f'--chroma_subsampling={('420', '422', '440', '444')[self.subsample]}')
         args.append('--progressive_level=1')
         return args
 
