@@ -381,7 +381,7 @@ class JpegliEncoderOptions(AbstractEncoderOptions):
             args.append('--xyb')
         else:
             args.append(f'--chroma_subsampling={('420', '422', '440', '444')[self.subsample]}')
-        args.append('--progressive_level=1')
+        args.append('--progressive_level=2')
         return args
 
 class PngquantEncoderOptions(AbstractEncoderOptions):
