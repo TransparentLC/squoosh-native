@@ -37,7 +37,7 @@ jobs:
           wget https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
           mv jxl-x64-windows-static.zip jxl-x64-windows.zip
           unzip jxl-x64-windows.zip
-          unzip jxl-x64-windows-static.zip
+          unzip jxl-x64-windows-static.zip || true
           cp cjxl.exe "${d}/cjxl.exe"
           cp cjpegli.exe "${d}/cjpegli.exe"
           cp ssimulacra2.exe "${d}/ssimulacra2.exe"
