@@ -19,17 +19,17 @@ jobs:
         run: |
           d=$(mktemp -d)
 
-          v=$(curl --silent --compressed https://api.github.com/repos/garyzyg/mozjpeg-windows/tags | jq -r ".[0].name")
+          v=$(curl --silent --http3 --location --compressed https://api.github.com/repos/garyzyg/mozjpeg-windows/tags | jq -r ".[0].name")
           wget "https://github.com/garyzyg/mozjpeg-windows/releases/download/${v}/mozjpeg-x64.zip"
           unzip "mozjpeg-x64.zip"
           cp cjpeg-static.exe "${d}/cjpeg.exe"
 
-          v=$(curl --silent --compressed https://api.github.com/repos/AOMediaCodec/libavif/tags | jq -r ".[0].name")
+          v=$(curl --silent --http3 --location --compressed https://api.github.com/repos/AOMediaCodec/libavif/tags | jq -r ".[0].name")
           wget "https://github.com/AOMediaCodec/libavif/releases/download/${v}/windows-artifacts.zip"
           unzip "windows-artifacts.zip"
           cp avifenc.exe "${d}/avifenc.exe"
 
-          v=$(curl --silent --compressed https://api.github.com/repos/shssoichiro/oxipng/tags | jq -r ".[0].name[1:]")
+          v=$(curl --silent --http3 --location --compressed https://api.github.com/repos/shssoichiro/oxipng/tags | jq -r ".[0].name[1:]")
           wget "https://github.com/shssoichiro/oxipng/releases/download/v${v}/oxipng-${v}-x86_64-pc-windows-msvc.zip"
           unzip "oxipng-${v}-x86_64-pc-windows-msvc.zip"
           cp "oxipng-${v}-x86_64-pc-windows-msvc/oxipng.exe" "${d}/oxipng.exe"
@@ -41,12 +41,12 @@ jobs:
           cp bin/ssimulacra2.exe "${d}/ssimulacra2.exe"
           cp bin/butteraugli_main.exe "${d}/butteraugli.exe"
 
-          v=$(curl --silent --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r 'map(select(.name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .[0].name[1:]')
+          v=$(curl --silent --http3 --location --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r 'map(select(.name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .[0].name[1:]')
           wget "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${v}-windows-x64.zip"
           unzip "libwebp-${v}-windows-x64.zip"
           cp "libwebp-${v}-windows-x64/bin/cwebp.exe" "${d}/cwebp.exe"
 
-          v=$(curl --silent --compressed https://api.github.com/repos/kornelski/dssim/releases | jq -r ".[0].tag_name")
+          v=$(curl --silent --http3 --location --compressed https://api.github.com/repos/kornelski/dssim/releases | jq -r ".[0].tag_name")
           wget "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
           unzip "dssim-${v}.zip"
           cp win/dssim.exe "${d}/dssim.exe"
