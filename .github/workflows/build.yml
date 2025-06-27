@@ -20,21 +20,21 @@ jobs:
           d=$(mktemp -d)
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/garyzyg/mozjpeg-windows/tags | jq -r ".[0].name")
-          wget "https://github.com/garyzyg/mozjpeg-windows/releases/download/${v}/mozjpeg-x64.zip"
+          wget --quiet "https://github.com/garyzyg/mozjpeg-windows/releases/download/${v}/mozjpeg-x64.zip"
           unzip "mozjpeg-x64.zip"
           cp cjpeg-static.exe "${d}/cjpeg.exe"
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/AOMediaCodec/libavif/tags | jq -r ".[0].name")
-          wget "https://github.com/AOMediaCodec/libavif/releases/download/${v}/windows-artifacts.zip"
+          wget --quiet "https://github.com/AOMediaCodec/libavif/releases/download/${v}/windows-artifacts.zip"
           unzip "windows-artifacts.zip"
           cp avifenc.exe "${d}/avifenc.exe"
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/shssoichiro/oxipng/tags | jq -r ".[0].name[1:]")
-          wget "https://github.com/shssoichiro/oxipng/releases/download/v${v}/oxipng-${v}-x86_64-pc-windows-msvc.zip"
+          wget --quiet "https://github.com/shssoichiro/oxipng/releases/download/v${v}/oxipng-${v}-x86_64-pc-windows-msvc.zip"
           unzip "oxipng-${v}-x86_64-pc-windows-msvc.zip"
           cp "oxipng-${v}-x86_64-pc-windows-msvc/oxipng.exe" "${d}/oxipng.exe"
 
-          wget https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
+          wget --quiet https://artifacts.lucaversari.it/libjxl/libjxl/latest/jxl-x64-windows-static.zip
           mv jxl-x64-windows-static.zip jxl-x64-windows.zip
           unzip jxl-x64-windows.zip
           unzip jxl-x64-windows-static.zip || true
@@ -44,16 +44,16 @@ jobs:
           cp butteraugli_main.exe "${d}/butteraugli.exe"
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/webmproject/libwebp/tags | jq -r 'map(select(.name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .[0].name[1:]')
-          wget "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${v}-windows-x64.zip"
+          wget --quiet "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${v}-windows-x64.zip"
           unzip "libwebp-${v}-windows-x64.zip"
           cp "libwebp-${v}-windows-x64/bin/cwebp.exe" "${d}/cwebp.exe"
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/kornelski/dssim/releases | jq -r ".[0].tag_name")
-          wget "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
+          wget --quiet "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
           unzip "dssim-${v}.zip"
           cp win/dssim.exe "${d}/dssim.exe"
 
-          wget https://pngquant.org/pngquant-windows.zip
+          wget --quiet https://pngquant.org/pngquant-windows.zip
           unzip pngquant-windows.zip
           cp pngquant/pngquant.exe "${d}/pngquant.exe"
 
