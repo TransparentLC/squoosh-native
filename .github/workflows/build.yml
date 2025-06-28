@@ -50,7 +50,7 @@ jobs:
 
           v=$(curl --silent --http2 --location --compressed https://api.github.com/repos/kornelski/dssim/releases | jq -r ".[0].tag_name")
           wget --quiet "https://github.com/kornelski/dssim/releases/download/${v}/dssim-${v}.zip"
-          unzip "dssim-${v}.zip" || true
+          unzip "dssim-${v}.zip"
           cp win/dssim.exe "${d}/dssim.exe"
 
           wget --quiet https://pngquant.org/pngquant-windows.zip
