@@ -71,15 +71,15 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
         with:
           version: latest
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: latest
           architecture: x64
@@ -87,9 +87,9 @@ jobs:
           cache: pnpm
           cache-dependency-path: squoosh/pnpm-lock.yaml
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.x
+          python-version: '3.13'
           check-latest: true
           # Error: Cache folder path is retrieved for pip but doesn't exist on disk
           # cache: pip
@@ -102,7 +102,7 @@ jobs:
           cd ..
           python bundle_squoosh.py
       - name: Upload result
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: squoosh
           path: squoosh.pak
@@ -121,11 +121,11 @@ jobs:
           - windows-latest
           # - ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.x
+          python-version: '3.13'
           check-latest: true
           # Error: Cache folder path is retrieved for pip but doesn't exist on disk
           # cache: pip
@@ -133,7 +133,7 @@ jobs:
       - name: Install pip dependencies
         run: pip install -U -r requirements.txt
       - name: Download prebuilt squoosh assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: squoosh
       - name: Build
@@ -152,7 +152,7 @@ jobs:
           cp bin/README.txt dist/squoosh-native/bin/README.txt
           cp README.md dist/squoosh-native/README.md
       - name: Upload result
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: squoosh-native-${{ runner.os }}
           path: dist
